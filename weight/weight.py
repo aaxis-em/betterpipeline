@@ -32,7 +32,10 @@ def findweight(url):
     url_text = f"{parsed_url.netloc} {parsed_url.path} {parsed_url.query}".lower()
     total_weight = 0
     urlembedding = nlp(str(url_text))
-    for key, value in priority_keyword_weights.items():
-        similarity = urlembedding.similarity(value[1])
-        total_weight += similarity * value[0]
+    for key, (weight, keywords_doc) in priority_keyword_weights.items():
+        if not urlembedding.has_vector or not keywords_doc.has_vector:
+            similarity = 0.0
+        else:
+            similarity = urlembedding.similarity(keywords_doc)
+        total_weight += similarity * weight
     return total_weight

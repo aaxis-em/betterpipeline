@@ -42,14 +42,11 @@ class Crawler:
                         continue
 
                     if full_url.startswith("http"):
-                        valid = detect_isscam(full_url, self.sess)
-                        if not valid:
-                            print("Valid")
+                        notvalid = detect_isscam(full_url, self.sess)
+                        if not notvalid:
                             weight = findweight(full_url)
                             self.queue.enqueue(full_url, weight)
                             self.visited.add(full_url)
-                        else:
-                            print("Not valid")
             self.depth -= 1
         except requests.exceptions.RequestException as e:
             print(f"Failed to fetch {url}: {e}")
