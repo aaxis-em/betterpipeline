@@ -103,5 +103,18 @@ def detect_isscam(x: str, sess):
 
     # Predict
     pred_ort = sess.run(None, input_dict)
+    
+    # Safely extract probability supporting various ONNX output formats
+    if len(pred_ort) > 1:
+        output = pred_ort[1]
+    else:
+        output = pred_ort[0]
+
+    if isinstance(output, list) and len(output) > 0 and isinstance(output[0], dict):
+        prob = output[0].get(1, output[0].get('1', 0.0))
+    else:
+        row = output[0]
+        prob = row[1] if len(row) > 1 else row[0]
+
     # return true if prob is greater than 85%
-    return pred_ort[1][0][1] >= 0.82
+    return prob >= 0.82
